@@ -1,6 +1,12 @@
 
 read.pyro.data <- function(file) {
-  pyro.data <- read.table(file, sep=";", skip=2, header=TRUE, stringsAsFactors=FALSE)
+  pyro.data <- tryCatch({
+    # try to read with UTF-16 encoding as output by Windows pyromark software
+    read.table(file, sep=";", fileEncoding="UTF16", skip=2, header=TRUE, stringsAsFactors=FALSE)
+  }, error = function(error_condition) {
+    # if that fails, try with default encoding
+    try(read.table(file, sep=";", skip=2, header=TRUE, stringsAsFactors=FALSE))
+  })
   pyro.data$Well <- as.character(pyro.data$Well)
   
   colnames(pyro.data) <- gsub("\\.$", "", gsub("[\\.]+", "\\.", colnames(pyro.data)))
