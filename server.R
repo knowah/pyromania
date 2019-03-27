@@ -409,11 +409,16 @@ function(input, output, session) {
     # calculate point position INSIDE the image as percent of total dimensions
     # from left (horizontal) and from top (vertical)
     left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
-    left_pct <- min(left_pct, max.left) # don't let it get too far to the right
+    #left_pct <- min(left_pct, max.left) # don't let it get too far to the right
     top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
     
     # calculate distance from left and bottom side of the picture in pixels
-    left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+    side_str <- "left:"
+    if (left_pct > 0.5) {
+      side_str <- "right:"
+      left_pct <- 1 - left_pct
+    }
+    side_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
     top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
     
     #cat(left_pct, top_pct, left_px, top_px, "\n")
@@ -421,7 +426,7 @@ function(input, output, session) {
     # background color is set so tooltip is a bit transparent
     # z-index is set so we are sure are tooltip will be on top
     style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.95); ",
-                    "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+                    side_str, side_px + 2, "px; top:", top_px + 2, "px;")
     
     # actual tooltip created as wellPanel
     wellPanel(
