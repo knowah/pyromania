@@ -8,7 +8,7 @@ source("pyro_data_tools.R")
 function(input, output, session) {
   ready.for.analysis <- reactiveVal(FALSE)
   
-  plate.df <- data.frame(r=rep(1:6, each=12), c=1:12)
+  plate.df <- data.frame(r=rep(1:8, each=12), c=1:12)
   plate.df$w <- with(plate.df, paste0(LETTERS[r], c))
   plate.df$s <- ""
   
@@ -37,7 +37,7 @@ function(input, output, session) {
       ready.for.analysis(TRUE)
       pyro.long <- melt(
         r.plate() %>%
-          filter(nchar(as.character(s)) > 0) %>%
+          filter(nchar(as.character(s)) > 0 & nchar(as.character(Assay)) > 0) %>%
           dplyr::select(w, s, Assay, ends_with("Methylation")),
         id.vars = c("w", "s", "Assay"),
         variable.name = "pos",
@@ -48,7 +48,7 @@ function(input, output, session) {
       
       pyro.long.q <- melt(
         r.plate() %>%
-          filter(nchar(as.character(s)) > 0) %>%
+          filter(nchar(as.character(s)) > 0 & nchar(as.character(Assay)) > 0) %>%
           dplyr::select(w, s, Assay, ends_with("Quality")),
         id.vars = c("w", "s", "Assay"),
         variable.name = "pos",
