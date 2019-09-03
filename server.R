@@ -7,8 +7,10 @@ source("pyro_data_tools.R")
 
 function(input, output, session) {
   ready.for.analysis <- reactiveVal(FALSE)
-  
-  plate.df <- data.frame(r=rep(1:8, each=12), c=1:12)
+  PLATE.ROWS <- 8
+  PLATE.COLS <- 12
+
+  plate.df <- data.frame(r=rep(1:PLATE.ROWS, each=PLATE.COLS), c=1:PLATE.COLS)
   plate.df$w <- with(plate.df, paste0(LETTERS[r], c))
   plate.df$s <- ""
   
@@ -179,9 +181,9 @@ function(input, output, session) {
     current.sample <- input$samp_select
     
     r0 <- max(1, floor(input$plate_brush$ymin))
-    r1 <- min(6, floor(input$plate_brush$ymax))
+    r1 <- min(PLATE.ROWS, floor(input$plate_brush$ymax))
     c0 <- max(1, floor(input$plate_brush$xmin))
-    c1 <- min(12, floor(input$plate_brush$xmax))
+    c1 <- min(PLATE.COLS, floor(input$plate_brush$xmax))
     
     df.rows.to.change <- with(plate.df, which(r >= r0 & r <= r1 & c >= c0 & c <= c1))
     
